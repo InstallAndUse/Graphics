@@ -1,3 +1,4 @@
+# 2021 04 26  + published on https://github.com/InstallAndUse/Graphics /A
 
 # Connecting Behringer X-Touch Mini to Adobe Lightroom using midi2lr plugin
 
