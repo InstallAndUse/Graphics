@@ -128,3 +128,8 @@ https://havecamerawilltravel.com/photographer/lightroom-alternatives/
 	BatchPhoto
 	PhotoMill
 	PhotoBulk
+
+
+
+Books:
+- [Anton's bookshelf](https://og2k.com/books/)

@@ -34,3 +34,8 @@ In opened MIDI2LR window:
 - Information on all the settings and options are in the wiki: https://github.com/rsjaffe/MIDI2LR/wiki.
 - [Introduction (part 1/3): Why you should prefer physical controls and what are the alternatives.](https://www.diyphotography.net/the-complete-lightroom-and-midi-tutorial-introduction-first-installment/)
 - [MIDI Controllers (part 2/3): Criteria for choosing a suitable MIDI Controller and some example controllers.](https://www.diyphotography.net/the-complete-lightroom-and-midi-tutorial-midi-controllers-second-installment/)
+
+
+
+Books:
+- [Anton's bookshelf](https://og2k.com/books/)
