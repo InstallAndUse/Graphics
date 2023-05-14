@@ -78,24 +78,26 @@ if [ ${confirm} = "Y" ]; then
     echo "Reading source and beginning to move..."
 
     # check that source directory exists, otherwise - exit
-    if ! [ -d {src}]; then
+    if ! [ -d ${src} ]; then
         echo "Source directory does not exist, exiting..."
         exit 2
     fi
 
     # check and create destination directory, if needed
-    if [ -d {dst}]; then
+    if [ -d ${dst} ]; then
         mkdir -p -m 700 ${dst}
     fi
 
-    find ${dst} -
+    # -path ${dst} -exec cp {} ${dst}
+    # -exec cp {} ${dst}/$(stat -f %Sm -t %Y-%m-%d)/ ';'
+    find ${src} -type f -print -exec mkdir -p ${dst}/$( stat -f %Sm -t %Y-%m-%d {} ) ';'
 
     # TODO: output total amount of files and size
     # itirate files
         # read creation date of file
-        dst_subdir="${dst}/${file_creation_date}${note}"
+        #dst_subdir="${dst}/${file_creation_date}${note}"
         # read creation date and time of file
-        file_new_name="$(read creation date and time, format)-${file}"
+        #file_new_name="$(read creation date and time, format)-${file}"
         # output debug
         # echo "[ $(ts) ] src: [${src}/${file], dst: [${dst_subdir}/${file_new_name}]"
         # hash before move
