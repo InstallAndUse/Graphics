@@ -11,6 +11,7 @@
 # History:
 # 2023-05-07  * init /A
 # 2023-05-08  + read flags from CLI /A
+# 2023-05-16  * moved from rsync to file 'for' itiration /A
 #
 
 function ts() {
@@ -88,9 +89,14 @@ if [ ${confirm} = "Y" ]; then
         mkdir -p -m 700 ${dst}
     fi
 
-    # -path ${dst} -exec cp {} ${dst}
-    # -exec cp {} ${dst}/$(stat -f %Sm -t %Y-%m-%d)/ ';'
-    find ${src} -type f -print -exec mkdir -p ${dst}/$( stat -f %Sm -t %Y-%m-%d {} ) ';'
+    # itirating files
+    for file in ${src}/*; do
+        file_mdate="$( stat -f %Sm -t %Y-%m-%d ${file} )"
+        echo "Filename: ${file}, it's modification date is: ${file_mdate}"
+        mkdir -p ${dst}/${file_mdate}
+        echo "[ $(ts) ] src: [${file}] dst: [${dst}/${file_mdate}]"
+        cp -v ${file} ${dst}/${file_mdate}
+    done
 
     # TODO: output total amount of files and size
     # itirate files
@@ -99,11 +105,8 @@ if [ ${confirm} = "Y" ]; then
         # read creation date and time of file
         #file_new_name="$(read creation date and time, format)-${file}"
         # output debug
-        # echo "[ $(ts) ] src: [${src}/${file], dst: [${dst_subdir}/${file_new_name}]"
         # hash before move
-        # TODO: perhaps, replace with rsync (if there will be any sense)
         # TODO: check if file exists
-        # cp -v ${src}/${file} ${dst_subdir}/${file_new_name}
         # hash after
         # TODO: compare hashes, output result
 
