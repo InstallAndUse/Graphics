@@ -12,10 +12,13 @@
 # 2023-05-07  * init /A
 # 2023-05-08  + read flags from CLI /A
 # 2023-05-16  * moved from rsync to file 'for' itiration /A
+# 2023-06-27  * upgrading /A
 #
 
 function ts() {
-    return $(date)
+    # change d
+    ts=$(date)
+    echo $(date )
 }
 
 # read flags
@@ -89,14 +92,50 @@ if [ ${confirm} = "Y" ]; then
         mkdir -p -m 700 ${dst}
     fi
 
+    # # itirating files
+    # for file in ${src}/*; do
+    #     # calculate total size for source files, as they will be copied (not recursive for directory)
+    # done
+    # echo "The size of all NN files is YY bytes (YY/1024 MB = YY/1024/104) GB."
+
+    # src, dst total and free disk space before transfer
+
     # itirating files
     for file in ${src}/*; do
+        filename="$(basename ${file})"
+        # figure out when is the creation date
         file_mdate="$( stat -f %Sm -t %Y-%m-%d ${file} )"
-        echo "Filename: ${file}, it's modification date is: ${file_mdate}"
+        # create subdirectory for creation date
         mkdir -p ${dst}/${file_mdate}
-        echo "[ $(ts) ] src: [${file}] dst: [${dst}/${file_mdate}]"
-        cp -v ${file} ${dst}/${file_mdate}
+        echo "[ $(ts) ]: src file : [${filename}], modification date is: ${file_mdate}, size: 11.5 MB"
+        # linux/BSD check
+        echo "sha256sum: [$( shasum -a 256 ${file} )]"
+        echo "dst dir:   [${dst}/${file_mdate}]"
+
+        # main operation
+        cp ${file} ${dst}/${file_mdate}
+
+        echo "sha256sum: [$( shasum -a 256 ${dst}/${file_mdate}/${filename} )]"
+
+        # if shasum is the same, remove file
+
+        # add original file with fullpath to array:
+        # files_src[]="${file}]"
+
+        # add copied file with fullpath to array:
+        # files_dst[]="${dst}/${file_mdate}/${filename}"
     done
+
+    # src, dst total and free disk space before transfer
+    # src, dst total and free disk space after copy
+    # time taken to transfer
+    # avarage transfer speed
+
+    # unmount disk ?
+    # diskutil unmount /Volumes/empty
+
+    # open latest directory created?
+
 
     # TODO: output total amount of files and size
     # itirate files
