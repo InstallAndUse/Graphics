@@ -1,7 +1,7 @@
 #
 # This is simple script for importing media files from source (such as memory cards)
 # to destination (such as local storage), creating date directories and renaming them by timestamp
-# of given file in desired format. Other features of script: integrity check (using sha256sum),
+# of given file in desired format. Other features of script: integrity check (using sha256sum).
 #
 #
 
@@ -17,6 +17,7 @@
 # 2023-06-28  * path with spaces variables /A
 # 2023-06-29  + hash comparison /A
 #             + removal on successful integrity verification /A
+# 2023-06-30  + add note to subdir, if specified /A
 #
 
 
@@ -124,8 +125,7 @@ if [ ${confirm} = "Y" ]; then
     fi
 
 
-
-    files_copied_filenam=()
+    files_copied_filename=()
     files_copied_total_size=0
     files_error_filename=()
 
@@ -137,22 +137,30 @@ if [ ${confirm} = "Y" ]; then
         # figure out when is the creation date
         file_mdate="$( stat -f %Sm -t %Y-%m-%d "$file" )"
         file_size="$( stat -f %z "$file" )"
+
+        # appending note, if specified
+        if [ ${note} = "" ]; then
+            dst_subdir="${file_mdate}"
+        else
+            dst_subdir="${file_mdate}${note}"
+        fi
+
         # create subdirectory for creation date
-        mkdir -p "$dst"/${file_mdate}
+        mkdir -p "$dst"/"$dst_subdir"
         echo "[ $(ts) ]: src file :     [${filename}], modification date is: ${file_mdate}, ( $(( ${file_size}/1024/1024 )) MB )"
         # TODO: linux/BSD check
 
         # calulating src hash sum
         src_hash=$( shasum -a 256 "$file" | cut -d ' ' -f 1)
         # echo "[ $(ts) ]: src sha256sum: [${src_hash}]"
-        echo "[ $(ts) ]: dst dir:       ["$dst"/${file_mdate}]"
+        echo "[ $(ts) ]: dst subdir:       ["$dst"/"$dst_subdir"]"
 
         # main operation
         echo "[ $(ts) ] copying.."
-        cp "$file" "$dst"/${file_mdate}
+        cp "$file" "$dst"/"$dst_subdir"
 
         # calulating dst hash sum
-        dst_hash=$( shasum -a 256 "${dst}/${file_mdate}/${filename}" | cut -d ' ' -f 1)
+        dst_hash=$( shasum -a 256 "${dst}/"$dst_subdir"/${filename}" | cut -d ' ' -f 1)
         # echo "[ $(ts) ]: dst sha256sum: [${dst_hash}]"
 
         # if shasum is the same, add to statistics and remove file
@@ -161,7 +169,7 @@ if [ ${confirm} = "Y" ]; then
             files_copied_filename+=("$filename")
             files_copied_total_size+=$file_size
 
-            # add summarize sized of copied file ${file_size}
+            # TODO: add summarize sized of copied file ${file_size}
             echo "[ $(ts) ]: src and dst hashes are the same, removing src file"
             rm "${file}"
         else
@@ -169,23 +177,22 @@ if [ ${confirm} = "Y" ]; then
             files_error_filename+=("$file")
         fi
 
-        # add original file with fullpath to array:
+        # TODO: add original file with fullpath to array:
         # files_src[]="${file}]"
 
-        # add copied file with fullpath to array:
-        # files_dst[]="${dst}/${file_mdate}/${filename}"
+        # TODO: add copied file with fullpath to array:
+        # files_dst[]="$dst"/"$dst_subdir"/${filename}
     done
 
-    # src, dst total and free disk space before transfer
-    # src, dst total and free disk space after copy
-    # time taken to transfer
-    # avarage transfer speed
+    # TODO: src, dst total and free disk space before transfer
+    # TODO: src, dst total and free disk space after copy
+    # TODO: time taken to transfer
+    # TODO: avarage transfer speed
 
-    # unmount disk ?
+    # TODO: unmount src disk ?
     # diskutil unmount /Volumes/empty
 
-    # open latest directory created?
-
+    # TODO: open latest directory created?
 
     # TODO: output total amount of files and size
     # itirate files
@@ -194,6 +201,6 @@ if [ ${confirm} = "Y" ]; then
 
 else
     # not confirmed
-    echo "Operation is not confirmed."
+    echo "[ $(ts) ]: Operation is not confirmed."
     exit 1
 fi
