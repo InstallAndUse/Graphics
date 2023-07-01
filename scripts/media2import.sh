@@ -48,7 +48,7 @@ done
 
 # read source path, by default current path (if not given)
 # assuming not recursive, only in-directory files will be imported
-if [ -z ${src} ]; then
+if [ -z $src ]; then
     read -p "[ $(ts) ]: Source      [$(pwd)]: " src
     if [ -z ${src} ]; then
         src="$(pwd)"
@@ -56,7 +56,7 @@ if [ -z ${src} ]; then
 fi
 
 # read destination path, by default current path (if not given)
-if [ -z ${dst} ]; then
+if [ -z $dst ]; then
     read -p "[ $(ts) ]: Destination [$(pwd)]: " dst
     if [ -z ${dst} ]; then
         dst="$(pwd)"
@@ -64,7 +64,7 @@ if [ -z ${dst} ]; then
 fi
 
 # read noteription, by default empty
-if [ -z ${note} ]; then
+if [ -z $note ]; then
     read -p "[ $(ts) ]: Note of session/event: " note
     if [ -z ${note} ]; then
         note=""
@@ -139,7 +139,7 @@ if [ ${confirm} = "Y" ]; then
         file_size="$( stat -f %z "$file" )"
 
         # appending note, if specified
-        if [ ${note} = "" ]; then
+        if [ -z "$note" ]; then
             dst_subdir="${file_mdate}"
         else
             dst_subdir="${file_mdate}${note}"
@@ -160,7 +160,7 @@ if [ ${confirm} = "Y" ]; then
         cp "$file" "$dst"/"$dst_subdir"
 
         # calulating dst hash sum
-        dst_hash=$( shasum -a 256 "${dst}/"$dst_subdir"/${filename}" | cut -d ' ' -f 1)
+        dst_hash=$( shasum -a 256 "${dst}/${dst_subdir}/${filename}" | cut -d ' ' -f 1)
         # echo "[ $(ts) ]: dst sha256sum: [${dst_hash}]"
 
         # if shasum is the same, add to statistics and remove file
