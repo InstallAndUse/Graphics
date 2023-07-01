@@ -100,6 +100,7 @@ if [ -d "$src" ]; then
         files_src_total_amount=$(( $files_src_total_amount+1 ))
     done
     echo "[ $(ts) ]: Source:      [${src}]"
+    # TODO: add nice GB figures (need to use awk or bc)
     echo "[ $(ts) ]: Total of $files_src_total_amount src files, total size is $(( $files_src_total_size/1024/1024 )) MB)."
 
 else
@@ -131,7 +132,7 @@ if [ ${confirm} = "Y" ]; then
 
     # itirating files
     for file in "$src"/*; do
-        echo "[ $(ts) ]: src dir:       ["$src"]"
+        # echo "[ $(ts) ]: src dir:       ["$src"]"
 
         filename="$(basename "$file")"
         # figure out when is the creation date
@@ -147,16 +148,17 @@ if [ ${confirm} = "Y" ]; then
 
         # create subdirectory for creation date
         mkdir -p "$dst"/"$dst_subdir"
-        echo "[ $(ts) ]: src file :     [${filename}], modification date is: ${file_mdate}, ( $(( ${file_size}/1024/1024 )) MB )"
-        # TODO: linux/BSD check
+        # TODO: echo 'show which file is being copied out of total' in the same status line below
+        echo "[ $(ts) ]: src dst: ["$src"], file: [${filename}], modification date is: ${file_mdate}, ( $(( ${file_size}/1024/1024 )) MB )"
 
+        # TODO: linux/BSD check for shasum function, if it does not run properly on linux
         # calulating src hash sum
         src_hash=$( shasum -a 256 "$file" | cut -d ' ' -f 1)
         # echo "[ $(ts) ]: src sha256sum: [${src_hash}]"
-        echo "[ $(ts) ]: dst subdir:       ["$dst"/"$dst_subdir"]"
+        echo "[ $(ts) ]: dst subdir: ["$dst"/"$dst_subdir"]"
 
         # main operation
-        echo "[ $(ts) ] copying.."
+        # echo "[ $(ts) ] copying.."
         cp "$file" "$dst"/"$dst_subdir"
 
         # calulating dst hash sum
