@@ -34,6 +34,10 @@ usage () {
     exit 1;
 }
 
+
+# TODO: skip files which specified extensions (*.LRV, *.THM)
+# TODO: remove files with specififed extensions (*.LRV, *.THM)
+
 # read flags
 while getopts s:d:n: flag
 do
@@ -172,10 +176,10 @@ if [ ${confirm} = "Y" ]; then
             files_copied_total_size+=$file_size
 
             # TODO: add summarize sized of copied file ${file_size}
-            echo "[ $(ts) ]: src and dst hashes are the same, removing src file"
+            # echo "[ $(ts) ]: src and dst hashes are the same, removing src file"
             rm "${file}"
         else
-            echo "[ $(ts) ]: src and dst hashes are different."
+            echo "[ $(ts) ]: src and dst hashes are different, src file will not be removed."
             files_error_filename+=("$file")
         fi
 
@@ -200,6 +204,8 @@ if [ ${confirm} = "Y" ]; then
     # itirate files
         # read creation date of file
         #dst_subdir="${dst}/${file_creation_date}${note}"
+
+    # TODO: list subdirs, that created (in order to see, where to files are transferred)
 
 else
     # not confirmed
