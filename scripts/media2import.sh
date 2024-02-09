@@ -20,6 +20,8 @@
 # 2023-06-30  + add note to subdir, if specified /A
 #
 
+# TODO
+# 2024-02-09  * destination path with spaces in quotes will break execution /A
 
 
 function ts() {
@@ -53,7 +55,7 @@ done
 # read source path, by default current path (if not given)
 # assuming not recursive, only in-directory files will be imported
 if [ -z $src ]; then
-    read -p "[ $(ts) ]: Source      [$(pwd)]: " src
+    read -p "[ $(ts) ]:      Source [$(pwd)]: " src
     if [ -z ${src} ]; then
         src="$(pwd)"
     fi
@@ -67,9 +69,10 @@ if [ -z $dst ]; then
     fi
 fi
 
-# read noteription, by default empty
+# read note, by default empty
 if [ -z $note ]; then
-    read -p "[ $(ts) ]: Note of session/event: " note
+    read -p "[ $(ts) ]:        Note: " note
+    # TODO: warning, if space present.
     if [ -z ${note} ]; then
         note=""
     else
@@ -84,14 +87,8 @@ if [ ${src} = ${dst} ]; then
     exit 2
 fi
 
-# # itirating files
-#     # calculate total size for source files, as they will be copied (not recursive for directory)
-# done
-# echo "The size of all NN files is YY bytes (YY/1024 MB = YY/1024/104) GB."
-
 
 echo "[ $(ts) ]: ----- [ Transfer details ] ---------------------------------------------"
-
 # check that source directory exists, otherwise - exit
 if [ -d "$src" ]; then
     # TODO: src, dst total and free disk space before transfer
@@ -103,7 +100,7 @@ if [ -d "$src" ]; then
         files_src_total_size=$(( $files_src_total_size+$file_size ))
         files_src_total_amount=$(( $files_src_total_amount+1 ))
     done
-    echo "[ $(ts) ]: Source:      [${src}]"
+    echo "[ $(ts) ]:      Source: [${src}]"
     # TODO: add nice GB figures (need to use awk or bc)
     echo "[ $(ts) ]: Total of $files_src_total_amount src files, total size is $(( $files_src_total_size/1024/1024 )) MB)."
 
@@ -113,17 +110,18 @@ else
 fi
 
 echo "[ $(ts) ]: Destination: [${dst}]"
-echo "[ $(ts) ]: Note:        [${note}]"
+echo "[ $(ts) ]:        Note: [${note}]"
 
 # confirm
 read -p "[ $(ts) ]: Confirm (Y): " confirm
 if [ ${confirm} = "Y" ]; then
-    echo "[ $(ts) ]: Preparing to transfer..."
+    # echo "[ $(ts) ]: Preparing to transfer..."
 
     # check and create destination directory, if needed
     if ! [ -d "$dst" ]; then
-        read -p "[ $(ts) ]: dst dir does not exist, do you want to create?" confirm
+        read -p "[ $(ts) ]: dst dir does not exist, do you want to create? (Y)" confirm
         if [ ${confirm} = "Y" ]; then
+            # TODO: add correct check if exit code is successful
             mkdir -v -p -m 700 "$dst"
             echo "[ $(ts) ]: dst dir created."
         fi
@@ -134,7 +132,7 @@ if [ ${confirm} = "Y" ]; then
     files_copied_total_size=0
     files_error_filename=()
 
-    # itirating files
+    # itirating files in src
     for file in "$src"/*; do
         # echo "[ $(ts) ]: src dir:       ["$src"]"
 
@@ -153,13 +151,13 @@ if [ ${confirm} = "Y" ]; then
         # create subdirectory for creation date
         mkdir -p "$dst"/"$dst_subdir"
         # TODO: echo 'show which file is being copied out of total' in the same status line below
-        echo "[ $(ts) ]: src dst: ["$src"], file: [${filename}], modification date is: ${file_mdate}, ( $(( ${file_size}/1024/1024 )) MB )"
+        echo "[ $(ts) ]: [${filename}], modification date is: ${file_mdate}, ( $(( ${file_size}/1024/1024 )) MB )"
 
         # TODO: linux/BSD check for shasum function, if it does not run properly on linux
         # calulating src hash sum
         src_hash=$( shasum -a 256 "$file" | cut -d ' ' -f 1)
         # echo "[ $(ts) ]: src sha256sum: [${src_hash}]"
-        echo "[ $(ts) ]: dst subdir: ["$dst"/"$dst_subdir"]"
+        # echo "[ $(ts) ]: dst subdir: ["$dst"/"$dst_subdir"]"
 
         # main operation
         # echo "[ $(ts) ] copying.."
@@ -195,7 +193,7 @@ if [ ${confirm} = "Y" ]; then
     # TODO: time taken to transfer
     # TODO: avarage transfer speed
 
-    # TODO: unmount src disk ?
+    # TODO: ! unmount src disk ?
     # diskutil unmount /Volumes/empty
 
     # TODO: open latest directory created?
