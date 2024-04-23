@@ -20,9 +20,12 @@
 # 2023-06-30  + add note to subdir, if specified /A
 # 2024-02-22  * fixed: destination path with spaces in quotes will break execution /A
 #             + check existance of files in src /A
+# 2024-04-24  * changed logic for 'note', when 'skip' value is given, it sets to empty /A
 #
 
 # TODO
+#             + skip files with defined mask (i.e. *.lrv, *.thm for GoPro) /A
+#             + ask to open last directory /A
 
 
 function ts() {
@@ -38,8 +41,6 @@ usage () {
 }
 
 
-# TODO: skip files which specified extensions (*.LRV, *.THM)
-# TODO: remove files with specififed extensions (*.LRV, *.THM)
 
 # read flags
 while getopts s:d:n: flag
@@ -70,17 +71,24 @@ if [ -z "${dst}" ]; then
     fi
 fi
 
-# read note, by default empty
+# read note
+# if empty, ask for not
 if [ -z "${note}" ]; then
-    read -p "[ $(ts) ]:        Note: " note
-    # TODO: warning, if space present.
-    if [ -z "${note}" ]; then
+      read -p "[ $(ts) ]:        Note: " note
+      # TODO: warning, if space present. - should not be a issue anymore
+else
+    # if given and it is 'skip', set to empty
+    if [ "${note}" == "skip" ]; then
+        printf "\n[ $(ts) ]:        Note: 'skip' is given as argument, setting note to empty ..\n"
         note=""
+    # otherwise, add hyphen as prefix
     else
-        # adding hyphen before note, if it is not empty
+        printf "\n[ $(ts) ]:        Note: '${note}', adding hyphen ..\n"
         note=" - ${note}"
     fi
 fi
+
+
 
 # source and destination can not be the same, exit
 if [ "${src}" = "${dst}" ]; then
